@@ -4,8 +4,9 @@ from flask import Flask, request, _app_ctx_stack, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col
 from flask_heroku import Heroku
+from twilio.twiml.messaging_response import MessagingResponse
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 app = Flask(__name__)
@@ -26,7 +27,7 @@ def sms_ahoy_reply():
 
     body = request.values.get('Body', None)
     phone_num = request.form['From']
-    curr_date = datetime.now()
+    curr_date = datetime.now() - timedelta(hours=7)
     new_entry = Entry(phone_num, curr_date, body)
     db.session.add(new_entry)
     db.session.commit()
