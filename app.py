@@ -9,8 +9,8 @@ from datetime import datetime
 import os
 
 app = Flask(__name__)
-# app.config.from_object(os.environ['APP_SETTINGS'])
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/journal_entries'
+app.config.from_object(os.environ['APP_SETTINGS'])
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/journal_entries'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 heroku = Heroku(app)
 db = SQLAlchemy(app)
