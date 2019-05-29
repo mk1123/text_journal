@@ -25,10 +25,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     phone_num = db.Column(db.String)
     name = db.Column(db.String)
-    url = db.Column(db.String)
+    username = db.Column(db.String)
     
     def __init__(self, phone_num, name):
         self.phone_num = phone_num
         self.name = name
-        self.url = "/users/" + name.lower().replace(' ', '_')
+        self.username = name.lower().replace(' ', '_')
     

@@ -49,9 +49,18 @@ def user_setup():
 
 @app.route("/")
 def display_journal():
-    qry = db.engine.execute("select distinct name from users")
-    users = qry.all()
-    return render_template('entries.html', users)
+    qry = db.engine.execute("select * from users")
+    users = qry.fetchall()
+    return render_template('names.html', users=users)
+
+@app.route("/user/<username>")
+def show_user_profile(username):
+    # show the user profile for that user
+    name = db.engine.execute("select name from users where username='" + username + "'").first()[0]
+    entries = db.engine.execute("select * from entries where name='" + name + "'").fetchall()
+    table = Entries(entries)
+    return render_template("entries.html", table=table, name=name)
+
     
 
 
