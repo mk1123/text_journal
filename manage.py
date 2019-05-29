@@ -1,18 +1,35 @@
 from flask_script import Manager
 from twilio.rest import Client
 
-from app import app
+from app import app, db
+
+from models import User
 
 manager = Manager(app)
 account_sid = 'AC92cbcdb460fcb1606c06fcf92e013436'
 auth_token = '509f7fea616ef52459984f9bd6271bcc'
 client = Client(account_sid, auth_token)
 
+client_phones = ['+19256678140', '+19253536746', '+19255575551']
+
 @manager.command
 def update():
-    message = client.messages.create(body="Hey man. How's your day going?",
-                                     from_='+14152377478',
-                                     to='+19256678140')
+    for client_string in client_phones:
+        message = client.messages.create(body="Hey man. How's your day going?",
+                                        from_='+14152377478',
+                                        to=client_string)
+        
+@manager.command
+def user_setup():
+    mulan_name = User('+19253536746', "Mulan Zhao")
+    trisha_name = User('+1925557551', "Trisha Khattar")
+    manan_name = User('+19256678140', "Manan Khattar")
+    db.session.add(mulan_name)
+    db.session.add(trisha_name)
+    db.session.add(manan_name)
+    db.session.commit()
+    return db.session.query(User).all()
+    
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 heroku = Heroku(app)
 db = SQLAlchemy(app)
 
-from models import Entry
+from models import Entry, User
 from tables import Entries
 
 
@@ -38,6 +38,12 @@ def sms_ahoy_reply():
         "Thanks for your response! It's been saved in the database.")
 
     return str(resp)
+
+
+@app.route("/user_setup")
+def user_setup():
+    return db.session.query(User).all()
+    
 
 @app.route("/")
 def display_journal():
