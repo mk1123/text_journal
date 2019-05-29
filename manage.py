@@ -19,7 +19,7 @@ account_sid = 'AC92cbcdb460fcb1606c06fcf92e013436'
 auth_token = '509f7fea616ef52459984f9bd6271bcc'
 client = Client(account_sid, auth_token)
 
-client_phones = ['+19256678140', '+19253536746', '+19255575551']
+client_phones = ['+19256678140', '+19253536746', '+19255575551', '+19253519739']
 
 @manager.command
 def update():
@@ -30,12 +30,8 @@ def update():
         
 @manager.command
 def user_setup():
-    mulan_name = User('+19253536746', "Mulan Zhao")
-    trisha_name = User('+1925557551', "Trisha Khattar")
-    manan_name = User('+19256678140', "Manan Khattar")
-    db.session.add(mulan_name)
-    db.session.add(trisha_name)
-    db.session.add(manan_name)
+    japjot_name = User('+19253519739', "Japjot Singh")
+    db.session.add(japjot_name)
     db.session.commit()
     return db.session.query(User).all()
 
