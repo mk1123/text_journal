@@ -30,7 +30,7 @@ def update():
         
 @manager.command
 def user_setup():
-    japjot_name = User('+19253519739', "Japjot Singh")
+    japjot_name = User('+19255575551', "Trisha Khattar")
     db.session.add(japjot_name)
     db.session.commit()
     return db.session.query(User).all()
