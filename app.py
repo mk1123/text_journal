@@ -27,8 +27,10 @@ def sms_ahoy_reply():
 
     body = request.values.get('Body', None)
     phone_num = request.form['From']
+    
+    name = db.engine.execute("select name from users where phone_num='" + phone_num + "'").first()[0]
     curr_date = datetime.now() - timedelta(hours=7)
-    new_entry = Entry(phone_num, curr_date, body)
+    new_entry = Entry(name, curr_date, body)
     db.session.add(new_entry)
     db.session.commit()
     resp = MessagingResponse()
@@ -47,10 +49,9 @@ def user_setup():
 
 @app.route("/")
 def display_journal():
-    qry = db.session.query(Entry).order_by(Entry.date.desc())
-    entries = qry.all()
-    table = Entries(entries)
-    return render_template('entries.html', table=table)
+    qry = db.engine.execute("select distinct name from users")
+    users = qry.all()
+    return render_template('entries.html', users)
     
 
 
