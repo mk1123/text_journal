@@ -20,7 +20,7 @@ from models import Entry, User
 from tables import Entries
 
 
-@app.route("/sms", methods=['POST'])
+@app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
     """Respond to incoming messages with a friendly SMS."""
     # Start our response
