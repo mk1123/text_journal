@@ -26,9 +26,25 @@ class User(db.Model):
     phone_num = db.Column(db.String)
     name = db.Column(db.String)
     username = db.Column(db.String)
+    authenticated = db.Column(db.Boolean)
     
     def __init__(self, phone_num, name):
         self.phone_num = phone_num
         self.name = name
         self.username = name.lower().replace(' ', '_')
+        self.authenticated = False
+        
+    def is_authenticated():
+        return self.authenticated
+        
+    def is_active():
+        return True
+        
+    def is_anonymous():
+        return False
+        
+    def get_id():
+        return self.username
+        
+        
     
