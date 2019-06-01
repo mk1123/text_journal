@@ -3,6 +3,7 @@ from twilio.rest import Client
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 import os
+import argparse
 
 from app import app, db
 
@@ -20,6 +21,8 @@ auth_token = '509f7fea616ef52459984f9bd6271bcc'
 client = Client(account_sid, auth_token)
 
 client_phones = ['+19256678140', '+19253536746', '+19255575551', '+19253519739']
+
+p=argparse.ArgumentParser()
 
 @manager.command
 def update():
@@ -49,3 +52,5 @@ def reset_properties():
 
 if __name__ == "__main__":
     manager.run()
+    if len(sys.argv) == 3:
+        user_setup(*sys.argv[1:])
