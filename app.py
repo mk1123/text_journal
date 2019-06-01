@@ -53,7 +53,6 @@ def login():
             sys.stdout.flush()
             return redirect(url_for('login'))
         print(login_user(user, remember=form.remember_me.data))
-        print(user.is_authenticated)
         sys.stdout.flush()
         next_page = request.args.get('next')    
         if not is_safe_url(next_page):
@@ -62,6 +61,7 @@ def login():
             next_page = url_for('display_journal')
         print("should redirect")
         sys.stdout.flush()
+        db.session.commit()
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
