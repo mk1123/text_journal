@@ -32,9 +32,7 @@ def update():
                                         to=client_string)
         
 @manager.command
-def user_setup(*args):
-    phone_num = args[0]
-    name = args[1]
+def user_setup(phone_num, name):
     new_user = User(phone_num, name)
     db.session.add(new_user)
     db.session.commit()
@@ -52,5 +50,5 @@ def reset_properties():
 
 if __name__ == "__main__":
     manager.run()
-    if len(sys.argv) == 3:
-        user_setup(*sys.argv[1:])
+    if len(sys.argv) == 4:
+        user_setup(*sys.argv[2:])
