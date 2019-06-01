@@ -63,6 +63,9 @@ def login():
         sys.stdout.flush()
         db.session.commit()
         return redirect(next_page)
+    else:
+        print("wtf")
+        sys.stdout.flush()
     return render_template('login.html', title='Sign In', form=form)
 
 
