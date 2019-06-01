@@ -73,6 +73,7 @@ def login():
 
 
 @app.route("/sms", methods=['GET', 'POST'])
+@csrf.exempt
 def sms_ahoy_reply():
     """Respond to incoming messages with a friendly SMS."""
     # Start our response
