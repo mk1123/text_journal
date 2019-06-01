@@ -26,7 +26,7 @@ p=argparse.ArgumentParser()
 
 @manager.command
 def update():
-    client_phones = session.query(User.phone_num).all()
+    client_phones = db.session.query(User.phone_num).all()
     for client_string in client_phones:
         message = client.messages.create(body="Hey man. How's your day going?",
                                         from_='+14152377478',
