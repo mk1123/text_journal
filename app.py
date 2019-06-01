@@ -56,7 +56,7 @@ def login():
             return redirect(url_for('login'))
         print(login_user(user, remember=form.remember_me.data))
         sys.stdout.flush()
-        next_page = request.args.get('next')
+        next_page = request.args.get('next')    
         if not is_safe_url(next_page):
             return flask.abort(400)
         if not next_page or urlparse(next_page).netloc != '':
