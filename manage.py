@@ -41,7 +41,8 @@ def user_setup(phone_num, name):
     third_paragraph = "You'll have to log in! Your username is " + new_user.username + ", but you'll have to \
                                     set your password. To set your password, send me a message like this:\n \
                                     password: <password>\n \
-                                    where <password> is your new password. I'll let you know once your password's been saved!"
+                                    where <password> is your new password. Your password is SHA256 encrypted, so the only \
+                                    person that can see it is you."
 
     client.messages.create(from_=twilio_phone, to=phone_num, body=first_paragraph)
     client.messages.create(from_=twilio_phone, to=phone_num, body=second_paragraph)
