@@ -43,7 +43,7 @@ def is_safe_url(target):
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.authenticated:
+    if current_user.is_authenticated:
         return redirect(url_for('display_journal'))
     form = LoginForm()
     if form.validate_on_submit():
