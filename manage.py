@@ -29,9 +29,11 @@ def update():
                                         to=client_string)
         
 @manager.command
-def user_setup():
-    japjot_name = User('+19255575551', "Trisha Khattar")
-    db.session.add(japjot_name)
+def user_setup(*args):
+    phone_num = args[0]
+    name = args[1]
+    new_user = User(phone_num, name)
+    db.session.add(new_user)
     db.session.commit()
     return db.session.query(User).all()
 
