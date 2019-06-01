@@ -44,6 +44,7 @@ def is_safe_url(target):
            ref_url.netloc == test_url.netloc
     
 @app.route('/login', methods=['GET', 'POST'])
+@csrf.exempt
 def login():
     form = LoginForm()
     if form.validate_on_submit():
