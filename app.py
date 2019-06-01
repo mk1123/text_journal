@@ -47,27 +47,18 @@ def login():
         return redirect(url_for('display_journal'))
     form = LoginForm()
     if form.validate_on_submit():
-        print("validated")
-        sys.stdout.flush()
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            print("in here")
-            sys.stdout.flush()
             flash('Invalid username or password')
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        next = request.args.get('next')
-        if not is_safe_url(next):
+        next_page = request.args.get('next')
+        if not is_safe_url(next_page):
             return flask.abort(400)
-        if not next or urlparse(next).netloc != '':
-            next = url_for('display_journal')
-            print(next)
-            sys.stdout.flush()
+        if not next_page or urlparse(next_page).netloc != '':
+            next_page = url_for('display_journal')
         user.is_authenticated = True
         db.session.commit()
-        return redirect(next)
-    print(form.errors)
-    sys.stdout.flush()
+        return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
 

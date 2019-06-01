@@ -35,6 +35,15 @@ def user_setup():
     db.session.commit()
     return db.session.query(User).all()
 
+@manager.command
+def reset_properties():
+    users = User.query.all()
+    for user in users:
+        user.is_authenticated = False
+        user.is_active = True
+        user.is_anonymous = False
+    db.session.commit()
+
 
 if __name__ == "__main__":
     manager.run()
