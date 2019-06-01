@@ -7,6 +7,7 @@ from flask_table import Table, Col
 from flask_heroku import Heroku
 from flask_login import LoginManager, login_user, login_required, current_user
 from twilio.twiml.messaging_response import MessagingResponse
+from flask_wtf.csrf import CSRFProtect
 import sys
 
 from datetime import datetime, timedelta
@@ -19,6 +20,7 @@ app.secret_key = "fuckthis"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 heroku = Heroku(app)
 db = SQLAlchemy(app)
+csrf = CSRFProtect(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
