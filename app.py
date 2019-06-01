@@ -61,6 +61,8 @@ def login():
             next = url_for('display_journal')
         user.authenticated = True
         return redirect(next)
+    print("not validated")
+    sys.stdout.flush()
     return render_template('login.html', title='Sign In', form=form)
 
 
