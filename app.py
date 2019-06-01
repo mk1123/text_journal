@@ -59,6 +59,8 @@ def login():
             return flask.abort(400)
         if not next or urlparse(next).netloc != '':
             next = url_for('display_journal')
+            print(next)
+            sys.stdout.flush()
         user.is_authenticated = True
         db.session.commit()
         return redirect(next)
