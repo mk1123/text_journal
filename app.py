@@ -55,7 +55,7 @@ def login():
         next = request.args.get('next')
         if not is_safe_url(next):
             return flask.abort(400)
-        if not next or url_parse(next).netloc != '':
+        if not next or urlparse(next).netloc != '':
             next = url_for('display_journal')
         return redirect(next)
     return render_template('login.html', title='Sign In', form=form)
@@ -90,30 +90,15 @@ def sms_ahoy_reply():
             "Thanks for your response! It's been saved in the database.")
 
         return str(resp)
-
-
-@app.route("/user_setup")
-def user_setup():
-    return db.session.query(User).all()
     
 
 @app.route("/")
 @login_required
 def display_journal():
-    qry = db.engine.execute("select * from users")
-    users = qry.fetchall()
-    return render_template('names.html', users=users)
-
-@app.route("/user/<username>")
-def show_user_profile(username):
-    # show the user profile for that user
-    name = db.engine.execute("select name from users where username='" + username + "'").first()[0]
+    name = current_user.name
     entries = db.engine.execute("select * from entries where name='" + name + "'order by date desc").fetchall()
     table = Entries(entries)
     return render_template("entries.html", table=table, name=name)
-
-    
-
 
 if __name__ == "__main__":
     app.run(debug=True)
