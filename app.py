@@ -43,8 +43,6 @@ def is_safe_url(target):
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('display_journal'))
     form = LoginForm()
     if form.validate_on_submit():
         print("in here 1")
@@ -55,6 +53,7 @@ def login():
             sys.stdout.flush()
             return redirect(url_for('login'))
         print(login_user(user, remember=form.remember_me.data))
+        print(user.is_authenticated)
         sys.stdout.flush()
         next_page = request.args.get('next')    
         if not is_safe_url(next_page):
