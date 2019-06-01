@@ -1,33 +1,37 @@
 # /usr/bin/env python
 # Download the twilio-python library from twilio.com/docs/libraries/python
-from flask import Flask, request, _app_ctx_stack, render_template, url_for
+from flask import Flask, request, _app_ctx_stack, render_template, url_for, flash, redirect
 from urllib.parse import urlparse, urljoin
 from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col
 from flask_heroku import Heroku
-from flask_login import LoginManager, login_user, login_required
+from flask_login import LoginManager, login_user, login_required, current_user
 from twilio.twiml.messaging_response import MessagingResponse
+import sys
 
 from datetime import datetime, timedelta
 import os
 
-login_manager = LoginManager()
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.secret_key = os.urandom(16)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/journal_entries'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-login_manager.init_app(app)
 heroku = Heroku(app)
 db = SQLAlchemy(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
 from models import Entry, User
 from tables import Entries
+from form import LoginForm
 
 @login_manager.user_loader
 def load_user(user_id):
     try:
-        return db.engine.execute("select * from users where username='" + user_id + "'").first()[0]
+        return User.query.filter_by(username=user_id).first()
     except:
         return None
     
@@ -39,25 +43,23 @@ def is_safe_url(target):
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Here we use a class of some kind to represent and validate our
-    # client-side form data. For example, WTForms is a library that will
-    # handle this for us, and we use a custom LoginForm to validate.
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        login_user(user)
-
-        flask.flash('Logged in successfully.')
-
-        next = flask.request.args.get('next')
-        # is_safe_url should check if the url is safe for redirects.
-        # See http://flask.pocoo.org/snippets/62/ for an example.
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        next = request.args.get('next')
         if not is_safe_url(next):
             return flask.abort(400)
+        if not next or url_parse(next).netloc != '':
+            next = url_for('display_journal')
+        return redirect(next)
+    return render_template('login.html', title='Sign In', form=form)
 
-        return flask.redirect(next or flask.url_for('index'))
-    return flask.render_template('login.html', form=form)
 
 
 @app.route("/sms", methods=['GET', 'POST'])
@@ -68,18 +70,26 @@ def sms_ahoy_reply():
     body = request.values.get('Body', None)
     phone_num = request.form['From']
     
-    name = db.engine.execute("select name from users where phone_num='" + phone_num + "'").first()[0]
-    curr_date = datetime.now() - timedelta(hours=7)
-    new_entry = Entry(name, curr_date, body)
-    db.session.add(new_entry)
-    db.session.commit()
-    resp = MessagingResponse()
+    user = User.query.filter_by(phone_num=phone_num).first()
+    
+    if body[:10].lower() == "password: ":
+        user.set_password(body[10:])
+        db.session.commit()
+        resp = MessagingResponse()
+        resp.message("Thanks for changing your password! It's been updated in the database.")
+        return str(resp)
+    else:
+        curr_date = datetime.now() - timedelta(hours=7)
+        new_entry = Entry(user.name, curr_date, body)
+        db.session.add(new_entry)
+        db.session.commit()
+        resp = MessagingResponse()
 
-    # Add a message
-    resp.message(
-        "Thanks for your response! It's been saved in the database.")
+        # Add a message
+        resp.message(
+            "Thanks for your response! It's been saved in the database.")
 
-    return str(resp)
+        return str(resp)
 
 
 @app.route("/user_setup")
