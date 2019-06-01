@@ -47,16 +47,22 @@ def login():
         return redirect(url_for('display_journal'))
     form = LoginForm()
     if form.validate_on_submit():
+        print("in here 1")
+        sys.stdout.flush()
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            print("in here 2")
+            sys.stdout.flush()
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
+        print(login_user(user, remember=form.remember_me.data))
+        sys.stdout.flush()
         next_page = request.args.get('next')
         if not is_safe_url(next_page):
             return flask.abort(400)
         if not next_page or urlparse(next_page).netloc != '':
             next_page = url_for('display_journal')
+        print("should redirect")
+        sys.stdout.flush()
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
