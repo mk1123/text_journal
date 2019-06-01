@@ -64,6 +64,7 @@ def login():
         if not next_page or urlparse(next_page).netloc != '':
             next_page = url_for('display_journal')
         print("should redirect")
+        user.is_authenticated = True
         sys.stdout.flush()
         db.session.commit()
         return redirect(next_page)
