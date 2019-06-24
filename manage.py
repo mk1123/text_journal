@@ -25,7 +25,7 @@ list_of_messages = ['Hey! How are you doing today?', 'Greetings! Do you have a m
 
 
 @manager.command
-def update():
+def update2():
     active_users = db.session.query(User).filter(User.is_deleted == False).all()
     print(active_users)
     for user in active_users:
@@ -41,8 +41,19 @@ def update():
                                             from_=twilio_phone,
                                             to=client_string)
                 message = client.messages.create(body="Of course, if you don't want to hear from me anymore, just type 'unsubscribe' and I'll deactivate your account.",from_=twilio_phone,to=client_string)
-        else:
-            message = client.messages.create(body=list_of_messages[randint(0, 2)],from_=twilio_phone,to=client_string)
+                return
+        
+        message = client.messages.create(body=list_of_messages[randint(0, 2)],from_=twilio_phone,to=client_string)
+        
+@manager.command
+def update():
+    active_users = db.session.query(User).filter(User.is_deleted == False).all()
+    # print(active_users)
+    for user in active_users:
+        client_string = user.phone_num
+        # print(client_string)
+        # print(user.name)
+        message = client.messages.create(body=list_of_messages[randint(0, 2)],from_=twilio_phone,to=client_string)
             
         
 @manager.command

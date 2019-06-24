@@ -86,7 +86,7 @@ def sms_ahoy_reply():
     
     user = User.query.filter_by(phone_num=phone_num).first()
     if user.is_deleted:
-        if body[:9].lower() == "subscribe":
+        if body[:5].lower() == "start":
             user.is_deleted = False
             db.session.commit()
             resp = MessagingResponse()
@@ -103,6 +103,8 @@ def sms_ahoy_reply():
             resp = MessagingResponse()
             resp.message("Thanks for changing your password! It's been updated in the database.")
             return str(resp)
+        elif body[:5].lower() == "start":
+            pass
         else:
             curr_date = datetime.now() - timedelta(hours=7)
             new_entry = Entry(user.name, curr_date, body)
