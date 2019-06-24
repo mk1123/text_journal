@@ -41,7 +41,8 @@ def update2():
                                             from_=twilio_phone,
                                             to=client_string)
                 message = client.messages.create(body="Of course, if you don't want to hear from me anymore, just type 'unsubscribe' and I'll deactivate your account.",from_=twilio_phone,to=client_string)
-                return
+            else:
+                message = client.messages.create(body=list_of_messages[randint(0, 2)],from_=twilio_phone,to=client_string)
         
         message = client.messages.create(body=list_of_messages[randint(0, 2)],from_=twilio_phone,to=client_string)
         
