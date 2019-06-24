@@ -3,12 +3,14 @@ from twilio.rest import Client
 from flask_migrate import Migrate, MigrateCommand
 import os
 import argparse
+from random import randint
 
 from app import app, db
 
 app.config.from_object(os.environ['APP_SETTINGS'])
 
-from models import User
+from models import User, Entry
+from datetime import datetime, timedelta
 
 manager = Manager(app)
 migrate = Migrate(app, db)
@@ -19,14 +21,29 @@ account_sid = 'AC92cbcdb460fcb1606c06fcf92e013436'
 auth_token = '509f7fea616ef52459984f9bd6271bcc'
 client = Client(account_sid, auth_token)
 twilio_phone = '+14152377478'
+list_of_messages = ['Hey! How are you doing today?', 'Greetings! Do you have a moment to talk about your day?', 'Hi! Tell me a pertinent fact about your day!']
+
 
 @manager.command
 def update():
-    client_phones = db.session.query(User.phone_num).all()
-    for client_string in client_phones:
-        message = client.messages.create(body="Hey man. How's your day going?",
-                                        from_=twilio_phone,
-                                        to=client_string)
+    active_users = db.session.query(User).filter(User.is_deleted == False).all()
+    print(active_users)
+    for user in active_users:
+        client_string = user.phone_num
+        # print(client_string)
+        # print(user.name)
+        user_exists = db.engine.execute("select date from entries where name='" + user.name + "'order by date desc").first()
+        if user_exists:
+            latest_entry = user_exists.date
+            # print(latest_entry)
+            if datetime.now() - latest_entry > timedelta(days=3):
+                message = client.messages.create(body="Hey, haven't seen you in a while! Feel free to just hit me up any time you want to say something noteworthy or just pertinent. Future you won't regret it!",
+                                            from_=twilio_phone,
+                                            to=client_string)
+                message = client.messages.create(body="Of course, if you don't want to hear from me anymore, just type 'unsubscribe' and I'll deactivate your account.",from_=twilio_phone,to=client_string)
+        else:
+            message = client.messages.create(body=list_of_messages[randint(0, 2)],from_=twilio_phone,to=client_string)
+            
         
 @manager.command
 def user_setup(phone_num, name):
@@ -53,9 +70,7 @@ def user_setup(phone_num, name):
 def reset_properties():
     users = User.query.all()
     for user in users:
-        user.is_authenticated = False
-        user.is_active = True
-        user.is_anonymous = False
+        user.is_deleted = False
     db.session.commit()
 
 

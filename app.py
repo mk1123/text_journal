@@ -85,27 +85,36 @@ def sms_ahoy_reply():
     phone_num = request.form['From']
     
     user = User.query.filter_by(phone_num=phone_num).first()
-    
-    if body[:10].lower() == "password: ":
-        user.set_password(body[10:])
-        db.session.commit()
-        resp = MessagingResponse()
-        resp.message("Thanks for changing your password! It's been updated in the database.")
-        return str(resp)
-    elif body[:11].lower() == "unsubscribe":
-        pass
+    if user.is_deleted:
+        if body[:9].lower() == "subscribe":
+            user.is_deleted = False
+            db.session.commit()
+            resp = MessagingResponse()
+            resp.message("Thanks for subscribing again! You're in the database once more!")
+            return str(resp)
+        else:
+            resp = MessagingResponse()
+            resp.message("You're unsubscribed from the program, so I can't save your messages! Type 'subscribe' to resubscribe.")
+            return str(resp)
     else:
-        curr_date = datetime.now() - timedelta(hours=7)
-        new_entry = Entry(user.name, curr_date, body)
-        db.session.add(new_entry)
-        db.session.commit()
-        resp = MessagingResponse()
+        if body[:10].lower() == "password: ":
+            user.set_password(body[10:])
+            db.session.commit()
+            resp = MessagingResponse()
+            resp.message("Thanks for changing your password! It's been updated in the database.")
+            return str(resp)
+        else:
+            curr_date = datetime.now() - timedelta(hours=7)
+            new_entry = Entry(user.name, curr_date, body)
+            db.session.add(new_entry)
+            db.session.commit()
+            resp = MessagingResponse()
 
-        # Add a message
-        resp.message(
-            "Thanks for your response! It's been saved in the database.")
+            # Add a message
+            resp.message(
+                "Thanks for your response! It's been saved in the database.")
 
-        return str(resp)
+            return str(resp)
     
 
 @app.route("/")
