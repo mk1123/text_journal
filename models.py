@@ -28,6 +28,7 @@ class User(db.Model):
     name = db.Column(db.String)
     username = db.Column(db.String)
     is_authenticated = db.Column(db.Boolean)
+    is_deleted = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean)
     is_anonymous = db.Column(db.Boolean)
     password_hash = db.Column(db.String)

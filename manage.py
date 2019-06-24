@@ -1,6 +1,5 @@
 from flask_script import Manager
 from twilio.rest import Client
-from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 import os
 import argparse
@@ -39,14 +38,16 @@ def user_setup(phone_num, name):
                                      so you can keep track of all your thoughts!"
     second_paragraph = "To see all your previous entries, go to http://manansjournal.herokuapp.com."
     third_paragraph = "You'll have to log in! Your username is " + new_user.username + ", but you'll have to \
-                                    set your password. To set your password, send me a message like this:\n \
-                                    password: <password>\n \
-                                    where <password> is your new password. Your password is SHA256 encrypted, so the only \
+                                    set your password. To set your password, send me a message like this:"
+    fourth_paragraph = "password: <password>"
+    fifth_paragraph = "where <password> is your new password. Your password is SHA256 encrypted, so the only \
                                     person that can see it is you."
 
     client.messages.create(from_=twilio_phone, to=phone_num, body=first_paragraph)
     client.messages.create(from_=twilio_phone, to=phone_num, body=second_paragraph)
     client.messages.create(from_=twilio_phone, to=phone_num, body=third_paragraph)
+    client.messages.create(from_=twilio_phone, to=phone_num, body=fourth_paragraph)
+    client.messages.create(from_=twilio_phone, to=phone_num, body=fifth_paragraph)
 
 @manager.command
 def reset_properties():

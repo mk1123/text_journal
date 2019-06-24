@@ -92,6 +92,8 @@ def sms_ahoy_reply():
         resp = MessagingResponse()
         resp.message("Thanks for changing your password! It's been updated in the database.")
         return str(resp)
+    elif body[:11].lower() == "unsubscribe":
+        pass
     else:
         curr_date = datetime.now() - timedelta(hours=7)
         new_entry = Entry(user.name, curr_date, body)
